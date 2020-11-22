@@ -16,6 +16,7 @@ kellyDTFM <- function(distr, param, rate = 0, h = 10^-4)
   ddistr <- paste("d", distr, sep = "")
   ddistr <- get(ddistr)
 
+
   if(distr == "unif")
   {
     return(kellyUniform(param, rate))

@@ -11,7 +11,7 @@ The goal of kellyfractions is to ...
 You can install the released version of kellyfractions from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("kellyfractions")
+devtools::install_github("shill1729/kellyfractions")
 ```
 
 ## Example
