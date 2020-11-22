@@ -201,8 +201,8 @@ mgfdkou <- function(t, prob, alpha, beta, ku, kd)
 #' @param iterations number of iterations in fixed-point scheme
 #'
 #' @return numeric
-#' @export kelly_jdf_fixp
-kelly_jdf_fixp <- function(mu, rate, volat, lambda, distr, jump_param, iterations = 100)
+#' @export kellyJumpDiffusionFP
+kellyJumpDiffusionFP <- function(mu, rate, volat, lambda, distr, jump_param, iterations = 100)
 {
   # Get the PDF of Y = log J
   mgf <- paste("mgf", distr, sep = "")
@@ -235,8 +235,8 @@ kelly_jdf_fixp <- function(mu, rate, volat, lambda, distr, jump_param, iteration
 #' @param jump_param parameters of distribution
 #'
 #' @return numeric
-#' @export kelly_jdf
-kelly_jdf <- function(mu, rate, volat, lambda, distr, jump_param)
+#' @export kellyJumpDiffusion
+kellyJumpDiffusion <- function(mu, rate, volat, lambda, distr, jump_param)
 {
   if(mu-rate<=0)
   {

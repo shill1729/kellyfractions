@@ -72,7 +72,7 @@ kellyPortfolioGBM <- function(drift, Sigma, rate = 0, restraint = 1, direction =
   growth <- rate+t(drift-rate)%*%(optimalWeight)-0.5*t(optimalWeight)%*%Sigma%*%optimalWeight
   # Append cash weight
   bet <- as.matrix(c(optimalWeight, 1-sum(optimalWeight)))
-  rownames(bet) <- c(colnames(drift), "cash")
+  rownames(bet) <- c(colnames(Sigma), "cash")
 
   return(bet)
 }

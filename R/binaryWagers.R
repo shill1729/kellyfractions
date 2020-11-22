@@ -41,8 +41,8 @@ entropyBinary <- function(p, a, b)
 #' @description {Simulating the generalized coin tossing gambling game.}
 #' @details {Start off with a given value of wealth and bet the Kelly fraction each round.}
 #' @return vector
-#' @export simulateBinary
-simulateBinary <- function(bankroll, p, a, b, trials = 100)
+#' @export optimalBinary
+optimalBinary <- function(bankroll, p, a, b, trials = 100)
 {
   # Initial wealth process
   z <- matrix(data = 0, nrow = trials+1)

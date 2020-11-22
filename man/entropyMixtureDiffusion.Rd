@@ -21,7 +21,7 @@ entropyMixtureDiffusion(t, s, spot, rate, parameters)
 numeric
 }
 \description{
-{Compute the entropy rate as a function of the fraction. This
+{A special case wrapper to \code{entropyItoProcess}. Compute the entropy rate as a function of the fraction. This
 involves solving a Feynman-Kac PDE with running cost the sum of the risk-free rate
 and half the square of the market price of risk.}
 }

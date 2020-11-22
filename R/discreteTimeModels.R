@@ -185,8 +185,8 @@ entropyDTFM <- function(distr, param, rate = 0, h = 10^-4)
 #' Assuming no trading costs, etc. Returns mean and total growth plus pnl.}
 #' @return list
 #' @importFrom findistr rgmm rstable
-#' @export simulateDTFM
-simulateDTFM <- function(n, spot, bankroll, distr, param, rate = 0, plotG = TRUE)
+#' @export optimalDTFM
+optimalDTFM <- function(n, spot, bankroll, distr, param, rate = 0, plotG = TRUE)
 {
   rdistr <- paste("r", distr, sep = "")
   rdistr <- get(rdistr)

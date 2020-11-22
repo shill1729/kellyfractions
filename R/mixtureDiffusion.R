@@ -5,21 +5,24 @@
 #' @param rate the discounting rate/money-market account return
 #' @param parameters matrix with rows probs, mus, sigmas for the components
 #' @param spot initial price
+#' @param FUN boolean whether to return numeric or function
 #'
 #' @description {Straightforward generalization of the classic Kelly-fraction for
-#' functions of time and space.}
+#' functions of time and space, specialized to mixture coefficients. A wrapper to \code{kellyItoProcess}.}
 #' @return numeric
 #' @export kellyMixtureDiffusion
-kellyMixtureDiffusion <- function(t, s, rate, parameters, spot)
+kellyMixtureDiffusion <- function(t, s, rate, parameters, spot, FUN = FALSE)
 {
+  mixtureParameterCheck(parameters)
   probs <- parameters[1, ]
   mus <- parameters[2, ]
   sigmas <- parameters[3, ]
 
   # Drift and volatility coefficients for mixture diffusion
-  mu <- function(t, s) findistr::drift_lvm(s, t, probs, mus, sigmas, spot)
-  v <- function(t, s) findistr::volat_lvm(s, t, probs, mus, sigmas, spot)
-  z <- (mu(t, s)-rate)/(v(t, s)^2)
+  dynamics <- list(function(t, s) findistr::drift_lvm(s, t, probs, mus, sigmas, spot),
+                   function(t, s) findistr::volat_lvm(s, t, probs, mus, sigmas, spot)
+  )
+  z <- kellyItoProcess(t, s, dynamics, rate, FUN)
   return(z)
 }
 
@@ -31,31 +34,22 @@ kellyMixtureDiffusion <- function(t, s, rate, parameters, spot)
 #' @param rate risk-free rate
 #' @param parameters parameters of mixture
 #'
-#' @description {Compute the entropy rate as a function of the fraction. This
+#' @description {A special case wrapper to \code{entropyItoProcess}. Compute the entropy rate as a function of the fraction. This
 #' involves solving a Feynman-Kac PDE with running cost the sum of the risk-free rate
 #' and half the square of the market price of risk.}
 #' @return numeric
 #' @export entropyMixtureDiffusion
 entropyMixtureDiffusion <- function(t, s, spot, rate, parameters)
 {
+  mixtureParameterCheck(parameters)
   probs <- parameters[1, ]
   mus <- parameters[2, ]
   sigmas <- parameters[3, ]
-  mu <- function(t, x) findistr::drift_lvm(x, t, probs, mus, sigmas, spot)
-  volat <- function(t, x) findistr::volat_lvm(x, t, probs, mus, sigmas, spot)
-  sharpe <- function(t, x) (mu(t, x)- rate)/volat(t, x)
-
-  dynamics <- list(function(t, x) mu(t, x)*x,
-                   function(t, x) volat(t, x)*x
+  dynamics <- list(function(t, s) findistr::drift_lvm(s, t, probs, mus, sigmas, spot),
+                   function(t, s) findistr::volat_lvm(s, t, probs, mus, sigmas, spot)
   )
-  problem <- list(function(t, x) 0,
-                  function(t, x) rate+0.5*sharpe(t, x)^2,
-                  function(x) 0
-  )
-  region <- c(t, 0, 2*spot)
-  control <- list(N = 200, M = 200, variational = FALSE, output = "price", engine = "c++")
-  v <- fkpde::solvePDE(dynamics, problem, region, control)
-  return(v)
+  z <- entropyItoProcess(t, s, dynamics, rate)
+  return(z)
 }
 
 
@@ -67,38 +61,35 @@ entropyMixtureDiffusion <- function(t, s, spot, rate, parameters)
 #' @param rate the return of the bond
 #' @param parameters matrix of parameters of mixture, see details
 #'
-#' @description {Simulate log-optimal strategy for mixture diffusion prices}
+#' @description {Simulate log-optimal strategy for mixture diffusion prices. A wrapper
+#' to \code{optimalItoProcess}.}
 #' @details {The matrix must contain a row of probabilities, a row of means, and
 #' a row of standard deviations.}
 #' @return data.frame of solution
-#' @export simulateMixtureDiffusion
-simulateMixtureDiffusion <- function(bankroll, t, spot, rate, parameters)
+#' @export optimalMixtureDiffusion
+optimalMixtureDiffusion <- function(bankroll, t, spot, rate, parameters)
 {
+  mixtureParameterCheck(parameters)
   probs <- parameters[1, ]
   mus <- parameters[2, ]
   sigmas <- parameters[3, ]
-
-  # Drift and volatility coefficients for mixture diffusion
-  mu <- function(t, s) findistr::drift_lvm(s, t, probs, mus, sigmas, spot)
-  volat <- function(t, s) findistr::volat_lvm(s, t, probs, mus, sigmas, spot)
-  IC <- list(s = spot, x = bankroll)
-  control <- function(t, s) kellyMixtureDiffusion(t, s, rate, parameters, spot)
-
-  f <- list(function(t, s, x) mu(t, s)*s,
-            function(t, s, x) (rate+(mu(t, s)-rate)*control(t, s))*x
+  dynamics <- list(function(t, s) findistr::drift_lvm(s, t, probs, mus, sigmas, spot),
+                   function(t, s) findistr::volat_lvm(s, t, probs, mus, sigmas, spot)
   )
-  g <- list(function(t, s, x) volat(t, s)*s,
-            function(t, s, x) control(t, s)*volat(t, s)*x
-  )
-  z <- sdes::samplePathSystem(f, g, IC, NULL, t0 = 0, tn = t, n = 1000)
-  sol <- z
-  sol$s <- log(sol$s)-log(IC$s)
-  sol$x <- log(sol$x)-log(IC$x)
-  graphics::par(mfrow = c(1, 2))
-  odeSolveR::plot_trajectories(sol, legend_names = c("Stock", "Portfolio"),
-                               legend_size = 0.4, legend_loc = "topleft")
-  odeSolveR::plot_phase_portrait(sol)
+  z <- optimalItoProcess(bankroll, t, spot, rate, dynamics)
   return(z)
 }
 
+#' Input error handling for mixture model
+#'
+#' @param parameters three rows containing probabilities, drifts, volatilities
+#'
+#' @return error or null
+mixtureParameterCheck <- function(parameters)
+{
+  if(nrow(parameters) != 3)
+  {
+    stop("parameters must be three rows of probabilities, drifts, and volatilities")
+  }
+}
 

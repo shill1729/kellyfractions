@@ -4,7 +4,7 @@
 \alias{kellyMixtureDiffusion}
 \title{Kelly-criterion for mixture diffusions}
 \usage{
-kellyMixtureDiffusion(t, s, rate, parameters, spot)
+kellyMixtureDiffusion(t, s, rate, parameters, spot, FUN = FALSE)
 }
 \arguments{
 \item{t}{current time}
@@ -16,11 +16,13 @@ kellyMixtureDiffusion(t, s, rate, parameters, spot)
 \item{parameters}{matrix with rows probs, mus, sigmas for the components}
 
 \item{spot}{initial price}
+
+\item{FUN}{boolean whether to return numeric or function}
 }
 \value{
 numeric
 }
 \description{
 {Straightforward generalization of the classic Kelly-fraction for
-functions of time and space.}
+functions of time and space, specialized to mixture coefficients. A wrapper to \code{kellyItoProcess}.}
 }

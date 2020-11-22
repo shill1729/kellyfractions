@@ -52,8 +52,8 @@ entropyTandemMoneyline <- function(p, a, b, u, v)
 #' @details {The argument \code{wagers} must contain four wagers, the first two the odds
 #' for the favorite, the latter two the odds for the underdog.}
 #' @return vector
-#' @export simulateMoneyline
-simulateMoneyline <- function(bankroll, p, wagers, trials = 100)
+#' @export optimalTandemMoneyline
+optimalTandemMoneyline <- function(bankroll, p, wagers, trials = 100)
 {
   a <- wagers[1]
   b <- wagers[2]
