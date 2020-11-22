@@ -7,7 +7,7 @@ Maintainer: S. Hill <52792611+shill1729@users.noreply.github.com>
 Description: Optimal bets via maximizing log return for binary wagers, 
     portfolios under discrete time with stable, Gaussian mixture, or uniform
     distributions, continuous time under geometric Brownian motion, and Merton
-    jump diffusion. 
+    jump diffusion. Simulations of the optimal strategies are included also.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -16,6 +16,9 @@ LinkingTo:
     Rcpp
 Imports:
     findistr,
+    fkpde,
     libstableR,
+    odeSolveR,
     quadprog,
-    Rcpp
+    Rcpp,
+    sdes

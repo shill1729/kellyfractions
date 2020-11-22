@@ -20,5 +20,5 @@ numeric
 }
 \description{
 {Approximates the integral in the log utility problem and
-then calls uniroot or Newton-Raphson solver}
+then calls uniroot or Newton-Raphson solver to maximize it.}
 }

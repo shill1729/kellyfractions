@@ -1,47 +1,56 @@
 #' The Kelly-fraction for a stock following GBM dynamics
 #'
 #' @param drift the mean drift rate of the GBM
-#' @param rate the risk-free rate of the bond
 #' @param volat the volatility of the GBM
+#' @param rate the risk-free rate of the bond
 #'
 #' @description {The famous Kelly-fraction, the amount to invest
 #' in a risky stock following a geometric Brownian motion.}
 #' @return numeric
 #' @export kellyGBM
-kellyGBM <- function(drift, rate, volat)
+kellyGBM <- function(drift, volat, rate = 0)
 {
-  f <- (drift-rate)/volat^2
+  f <- (drift-rate)/(volat^2)
+  return(f)
+}
+
+#' The optimal log-growth rate under univariate GBM
+#'
+#' @param drift the mean drift rate of the GBM
+#' @param volat the volatility of the GBM
+#' @param rate the risk-free rate of the bond
+#'
+#' @description {The optimal log growth rate under the Kelly-criterion for
+#' geometric Brownian motion.}
+#' @return numeric
+#' @export entropyGBM
+entropyGBM <- function(drift, volat, rate = 0)
+{
   lambda <- (drift-rate)/volat
   g <- rate+0.5*lambda^2
-  return(c(fraction = f, growth = g))
+  return(g)
 }
 
 #' Kelly portfolio in continuous time for GBM market
 #'
-#' @param log_ret the data-set of (daily) log-returns. Assumes it is a matrix with colnames of tickers
+#' @param drift the drift vector of the GBMs
+#' @param Sigma the covariance matrix of the GBMs
 #' @param rate the rate earned on cash in a money market account, etc
 #' @param restraint percentage of wealth to bankroll
 #' @param direction the direction of the bet: long or short
-#' @param sample_mean the mean vector, optional
-#' @param sample_cov the covariance matrix, optional
 #'
-#' @description {For continuous time market of GBMs, the log optimal portfolio is given by a quadratic
-#' programming problem.}
-#' @details {The function estimates the entire sample set for mean returns and covariance and then runs the optimization routine by calling solve.qp from quadprog package.}
+#' @description {A wrapper to \code{solve.QP} for computing optimal portfolios
+#' under a market of correlated geometric Brownian motions.}
+#' @details {The drift of the log-returns and covariance must be passed.}
 #' @return list of growth rate and optimal portfolio
-#' @import quadprog
-#' @export portfolioGBM
-portfolioGBM <- function(log_ret, rate = 0, restraint = 1, direction = "long", sample_mean = NULL, sample_cov = NULL)
+#'
+#' @importFrom quadprog solve.QP
+#' @export kellyPortfolioGBM
+kellyPortfolioGBM <- function(drift, Sigma, rate = 0, restraint = 1, direction = "long")
 {
   # Get number of assets of portfolio
-  N <- dim(log_ret)[2]
-  # Compute sample mean and covariance matrix
-  if(is.null(sample_mean) || is.null(sample_cov))
-  {
-    sample_cov <- stats::cov(log_ret)*252
-    sample_mean <- apply(log_ret, 2, mean)*252+0.5*diag(sample_cov)
+  N <- length(drift)
 
-  }
   # TODO: Add a semi-positive definitive check here!...
   # Constraint vector and matrix, want <= 1 for budget constraint, and >= 0 for no-short selling
   if(direction == "long")
@@ -57,12 +66,38 @@ portfolioGBM <- function(log_ret, rate = 0, restraint = 1, direction = "long", s
   }
 
   # Quadratic programming routine
-  qp <- quadprog::solve.QP(Dmat = sample_cov, dvec = sample_mean-rate, Amat = Amat, bvec)
+  qp <- quadprog::solve.QP(Dmat = Sigma, dvec = drift-rate, Amat = Amat, bvec)
   optimalWeight <- as.matrix(round(qp$solution, 8))
-  growth <- rate+t(sample_mean-rate)%*%(optimalWeight)-0.5*t(optimalWeight)%*%sample_cov%*%optimalWeight
-  # append cash weight
-  bet <- as.matrix(c(optimalWeight, 1-sum(optimalWeight)))
-  rownames(bet) <- c(colnames(log_ret), "cash")
 
-  return(list(growth = growth, bet = bet))
+  growth <- rate+t(drift-rate)%*%(optimalWeight)-0.5*t(optimalWeight)%*%Sigma%*%optimalWeight
+  # Append cash weight
+  bet <- as.matrix(c(optimalWeight, 1-sum(optimalWeight)))
+  rownames(bet) <- c(colnames(drift), "cash")
+
+  return(bet)
+}
+
+#' Maximum log-growth rate for continuous time GBM portfolios
+#'
+#' @param drift the drift vector of the GBMs
+#' @param Sigma the covariance matrix of the GBMs
+#' @param rate the rate earned on cash in a money market account, etc
+#' @param restraint percentage of wealth to bankroll
+#' @param direction the direction of the bet: long or short
+#'
+#' @description {A wrapper to \code{solve.QP} for computing optimal portfolios
+#' under a market of correlated geometric Brownian motions.}
+#' @details {The drift of the log-returns and covariance must be passed.}
+#'
+#' @return list of growth rate and optimal portfolio
+#' @importFrom quadprog solve.QP
+#' @export entropyPortfolioGBM
+entropyPortfolioGBM <- function(drift, Sigma, rate = 0, restraint = 1, direction = "long")
+{
+  optimalWeight <- kellyPortfolioGBM(drift, Sigma, rate, restraint, direction)
+  # Remove cash holding
+  optimalWeight <- optimalWeight[-nrow(optimalWeight),]
+  # Compute maximum growth rate
+  growth <- rate+t(drift-rate)%*%(optimalWeight)-0.5*t(optimalWeight)%*%Sigma%*%optimalWeight
+  return(growth)
 }

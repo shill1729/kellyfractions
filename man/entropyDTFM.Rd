@@ -19,6 +19,6 @@ entropyDTFM(distr, param, rate = 0, h = 10^-4)
 numeric
 }
 \description{
-{Approximates the integral in the log utility problem. This
-is a new interface for \code{entropy_integral}, which will be deprecated and removed.}
+{Compute the (approximate) log-growth rate for optimized
+discrete-time financial models.}
 }

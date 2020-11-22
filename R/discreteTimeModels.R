@@ -6,10 +6,9 @@
 #' @param h step size to avoid numeric blow-ups
 #'
 #' @description {Approximates the integral in the log utility problem and
-#' then calls uniroot or Newton-Raphson solver}
+#' then calls uniroot or Newton-Raphson solver to maximize it.}
 #' @return numeric
-#' @importFrom findistr dgmm
-#' @importFrom findistr dstable
+#' @importFrom findistr dgmm dstable
 #' @export kellyDTFM
 kellyDTFM <- function(distr, param, rate = 0, h = 10^-4)
 {
@@ -97,10 +96,11 @@ kellyDTFM <- function(distr, param, rate = 0, h = 10^-4)
 #' @param rate the risk-neutral rate of the money-market account
 #' @param h step size for numeric blow-ups
 #'
-#' @description {Approximates the integral in the log utility problem. This
-#' is a new interface for \code{entropy_integral}, which will be deprecated and removed.}
+#' @description {Compute the (approximate) log-growth rate for optimized
+#' discrete-time financial models.}
 #'
 #' @return numeric
+#' @importFrom findistr dstable dgmm
 #' @export entropyDTFM
 entropyDTFM <- function(distr, param, rate = 0, h = 10^-4)
 {
@@ -170,3 +170,52 @@ entropyDTFM <- function(distr, param, rate = 0, h = 10^-4)
   return(g)
 
 }
+
+#' Simulate log-optimal strategy for DTFM
+#'
+#' @param n number of days to simulate
+#' @param spot initial stock price
+#' @param bankroll initial bankroll
+#' @param distr distribution of daily arithmetic returns
+#' @param param parameters of the distribution
+#' @param rate risk-neutral rate
+#' @param plotG boolean for plotting on call
+#'
+#' @description {Simulates daily stock prices under the model and implements the strategy.
+#' Assuming no trading costs, etc. Returns mean and total growth plus pnl.}
+#' @return list
+#' @importFrom findistr rgmm rstable
+#' @export simulateDTFM
+simulateDTFM <- function(n, spot, bankroll, distr, param, rate = 0, plotG = TRUE)
+{
+  rdistr <- paste("r", distr, sep = "")
+  rdistr <- get(rdistr)
+  x <- kellyDTFM(distr, param, rate)
+  if(distr == "norm" || distr == "unif")
+  {
+    args <- c(n, as.list(param))
+  } else if(distr == "gmm")
+  {
+    args <- list(n, param[1, ], param[2, ], param[3, ])
+
+  } else if(distr == "stable")
+  {
+    args <- list(n, param)
+  }
+  r <- do.call(rdistr, args)
+  s <- spot*c(1, cumprod(1+r))
+  p <- bankroll*c(1, cumprod(1+rate+x*(r-rate)))
+  sx <- log(s/spot)
+  px <- log(p/bankroll)
+  bounds <- c(min(px, sx), max(px, sx))
+
+  if(plotG)
+  {
+    plot(px, ylim = bounds, type = "l", ylab = c("Total-log return"), xlab = "Day")
+    graphics::lines(sx, col = "red")
+  }
+  result <- list(total_growth = px[n+1], profit = p[n+1]-p[1])
+
+  return(result)
+}
+

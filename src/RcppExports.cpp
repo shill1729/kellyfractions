@@ -5,6 +5,22 @@
 
 using namespace Rcpp;
 
+// mgf_dkou
+double mgf_dkou(double t, double prob, double alpha, double beta, double ku, double kd);
+RcppExport SEXP _kellyfractions_mgf_dkou(SEXP tSEXP, SEXP probSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP kuSEXP, SEXP kdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    Rcpp::traits::input_parameter< double >::type prob(probSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type ku(kuSEXP);
+    Rcpp::traits::input_parameter< double >::type kd(kdSEXP);
+    rcpp_result_gen = Rcpp::wrap(mgf_dkou(t, prob, alpha, beta, ku, kd));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kellyUniform
 double kellyUniform(std::vector<double> interval, double rate, unsigned int n);
 RcppExport SEXP _kellyfractions_kellyUniform(SEXP intervalSEXP, SEXP rateSEXP, SEXP nSEXP) {
@@ -20,6 +36,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_kellyfractions_mgf_dkou", (DL_FUNC) &_kellyfractions_mgf_dkou, 6},
     {"_kellyfractions_kellyUniform", (DL_FUNC) &_kellyfractions_kellyUniform, 3},
     {NULL, NULL, 0}
 };
