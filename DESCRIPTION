@@ -1,0 +1,21 @@
+Package: kellyfractions
+Type: Package
+Title: Optimize log returns
+Version: 0.1.0
+Author: S. Hill
+Maintainer: S. Hill <52792611+shill1729@users.noreply.github.com>
+Description: Optimal bets via maximizing log return for binary wagers, 
+    portfolios under discrete time with stable, Gaussian mixture, or uniform
+    distributions, continuous time under geometric Brownian motion, and Merton
+    jump diffusion. 
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+LinkingTo: 
+    Rcpp
+Imports:
+    findistr,
+    libstableR,
+    quadprog,
+    Rcpp
