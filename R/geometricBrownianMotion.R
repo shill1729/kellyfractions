@@ -31,6 +31,36 @@ entropyGBM <- function(drift, volat, rate = 0)
   return(g)
 }
 
+
+#' Simulate log-optimal strategy on mixture diffusions
+#'
+#' @param bankroll initial bankroll to invest
+#' @param t time horizon to trade over
+#' @param spot the initial stock price
+#' @param rate the return of the bond
+#' @param parameters drift and volatility
+#'
+#' @description {Simulate log-optimal strategy for prices under geometric Brownian motion. A wrapper
+#' to \code{optimalItoProcess}.}
+#' @details {The parameters must be a vector of drift and volatility.}
+#' @return data.frame of solution
+#' @export optimalGBM
+optimalGBM <- function(bankroll, t, spot, rate, parameters)
+{
+
+  mu <- parameters[1]
+  volat <- parameters[2]
+  if(volat <= 0)
+  {
+    stop("volatility must be positive")
+  }
+  dynamics <- list(function(t, s) mu,
+                   function(t, s) volat
+  )
+  z <- optimalItoProcess(bankroll, t, spot, rate, dynamics)
+  return(z)
+}
+
 #' Kelly portfolio in continuous time for GBM market
 #'
 #' @param drift the drift vector of the GBMs
