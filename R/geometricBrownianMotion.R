@@ -15,7 +15,7 @@ kellyGBM <- function(drift, volat, rate = 0, restraint = NULL)
   {
     f <- (drift-rate)/(volat^2)
     return(f)
-  } else if (drift-rate <= restraint*volat^2)
+  } else if (abs(drift-rate) <= restraint*volat^2)
   {
     f <- (drift-rate)/(volat^2)
     return(f)
