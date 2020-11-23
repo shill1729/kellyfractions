@@ -4,7 +4,7 @@
 \alias{kellyGBM}
 \title{The Kelly-fraction for a stock following GBM dynamics}
 \usage{
-kellyGBM(drift, volat, rate = 0)
+kellyGBM(drift, volat, rate = 0, restraint = NULL)
 }
 \arguments{
 \item{drift}{the mean drift rate of the GBM}
@@ -12,6 +12,8 @@ kellyGBM(drift, volat, rate = 0)
 \item{volat}{the volatility of the GBM}
 
 \item{rate}{the risk-free rate of the bond}
+
+\item{restraint}{a number between 0 and 1, null for (possibly) leveraged Kelly}
 }
 \value{
 numeric

@@ -3,15 +3,27 @@
 #' @param drift the mean drift rate of the GBM
 #' @param volat the volatility of the GBM
 #' @param rate the risk-free rate of the bond
+#' @param restraint a number between 0 and 1, null for (possibly) leveraged Kelly
 #'
 #' @description {The famous Kelly-fraction, the amount to invest
 #' in a risky stock following a geometric Brownian motion.}
 #' @return numeric
 #' @export kellyGBM
-kellyGBM <- function(drift, volat, rate = 0)
+kellyGBM <- function(drift, volat, rate = 0, restraint = NULL)
 {
-  f <- (drift-rate)/(volat^2)
-  return(f)
+  if(is.null(restraint))
+  {
+    f <- (drift-rate)/(volat^2)
+    return(f)
+  } else if (drift-rate <= restraint*volat^2)
+  {
+    f <- (drift-rate)/(volat^2)
+    return(f)
+
+  } else{
+    return(restraint)
+  }
+
 }
 
 #' The optimal log-growth rate under univariate GBM
