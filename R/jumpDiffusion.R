@@ -60,8 +60,8 @@ jump_entropy_term <- function(a, m, r, v, lambda, distr, jump_param)
 #' @param jump_param parameters of above distribution
 #'
 #' @return numeric
-#' @export entropy_jdf
-entropy_jdf <- function(a, t, x, mu, rate, volat, lambda, distr, jump_param)
+#' @export entropyJumpDiffusion
+entropyJumpDiffusion <- function(a, t, x, mu, rate, volat, lambda, distr, jump_param)
 {
   log(x)+t*jump_entropy_term(a, mu, rate, volat, lambda, distr, jump_param)
 }
