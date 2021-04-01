@@ -19,11 +19,29 @@ jump_value_integral <- function(a, distr = "norm", jump_param, nstd = 4)
     lb <- jump_param$min
     ub <- jump_param$max
   } else{
-    stop("TO DO: implement kou bounds for integral region")
+    warning("TO DO: implement kou bounds for integral region")
+    lb <- -3*jump_param$beta
+    ub <- 3*jump_param$alpha
+
   }
   # Get the PDF of Y = log J
   dist <- paste("d", distr, sep = "")
-  f_Y<- function(y) do.call(what = dist, args = list(y, unlist(jump_param)))
+  if(distr == "dkou") # displaced-kou is picky. (or i'm dumb)
+  {
+    f_Y <- function(y)
+    {
+      args <- list(y)
+      for(i in 1:length(jump_param))
+      {
+        args[[i+1]] <- jump_param[[i]]
+      }
+      do.call(what = dist, args = args)
+    }
+  } else
+  {
+    f_Y<- function(y) do.call(what = dist, args = list(y, unlist(jump_param)))
+  }
+
   integrand <- function(y, a) {
     (log(1+a*(exp(y)-1))-a*(exp(y)-1))*f_Y(y)
   }
@@ -80,18 +98,39 @@ jump_integral <- function(a, distr = "norm", jump_param, nstd = 4)
   {
     jm <- jump_param$mean
     jv <- jump_param$sd
-    lb <- jm-nstd*jv
-    ub <- jm+nstd*jv
+    # lb <- jm-nstd*jv
+    # ub <- jm+nstd*jv
+    # Truncate interval
+    lb <- stats::qnorm(0.99, jm, jv, FALSE)
+    ub <- stats::qnorm(0.99, jm, jv)
   } else if(distr == "unif")
   {
     lb <- jump_param$min
     ub <- jump_param$max
   } else{
-    stop("TO DO: implement kou bounds for integral region")
+    warning("TO DO: implement kou bounds for integral region")
+    # lb <- -3*jump_param$beta
+    # ub <- 3*jump_param$alpha
+    lb <- -Inf
+    ub <- Inf
   }
   # Get the PDF of Y = log J
   dist <- paste("d", distr, sep = "")
-  f_Y<- function(y) do.call(what = dist, args = list(y, unlist(jump_param)))
+  if(distr == "dkou") # displaced-kou is picky. (or i'm dumb)
+  {
+    f_Y <- function(y)
+    {
+      args <- list(y)
+      for(i in 1:length(jump_param))
+      {
+        args[[i+1]] <- jump_param[[i]]
+      }
+      do.call(what = dist, args = args)
+    }
+  } else
+  {
+    f_Y<- function(y) do.call(what = dist, args = list(y, unlist(jump_param)))
+  }
   integrand <- function(y, a) {
     ((a*(exp(y)-1)^2)/(1+a*(exp(y)-1)))*f_Y(y)
   }
@@ -231,10 +270,15 @@ kellyJumpDiffusionFP <- function(mu, rate, volat, lambda, distr, jump_param, ite
 #' @param rate discounting rate
 #' @param volat volatility
 #' @param lambda mean rate of jumps
-#' @param distr distribution of jump sizes
-#' @param jump_param parameters of distribution
+#' @param distr distribution of jump sizes, "norm", "unif", "dkou", etc.
+#' @param jump_param parameters of distribution, a named list that must match the names of the distribution
 #'
 #' @return numeric
+#' @description {The log-optimal allocation under a geometric jump diffusion.
+#' Does not exist for certain regions of the parameter space.}
+#' @details {The optimal fraction is the root of an integral equation. It does not exist
+#' when the classical fraction is bigger than one plus the jump rate multiplied by the
+#' sum of the MGF of the jump-size distribution evaluated at 1, -1, and subtracting off 2 in this factor.}
 #' @export kellyJumpDiffusion
 kellyJumpDiffusion <- function(mu, rate, volat, lambda, distr, jump_param)
 {
@@ -242,6 +286,7 @@ kellyJumpDiffusion <- function(mu, rate, volat, lambda, distr, jump_param)
   {
     stop("mu must be greater than rate")
   }
+  mgfs <- 0
   if(distr == "norm")
   {
 
@@ -276,13 +321,15 @@ kellyJumpDiffusion <- function(mu, rate, volat, lambda, distr, jump_param)
     eta2 <- mgfdkou(-1, prob, alpha, beta, ku, kd)-1
     mgfs <- eta1+eta2
   }
-  if(mu-rate > volat^2+lambda*mgfs)
+  classicalKelly <- (mu-rate)/volat^2
+  if(classicalKelly > 1+(lambda/(volat^2))*mgfs)
   {
-    print("Excess return")
-    print(mu-rate)
-    print("Variance+jump risk")
-    print(volat^2+lambda*mgfs)
-    warning("mu-rate must be less than variance plus mean jumps times sum of mgf at one and negative one")
+    print("Diffusion optimal fraction")
+    print(classicalKelly)
+    print("Jump boundary")
+    print(1+(lambda/volat^2)*mgfs)
+    minJumpRate <- (mu-rate-volat^2)/mgfs
+    warning(paste("The jump rate lambda must be greater than", minJumpRate))
   }
-  stats::uniroot(kjdf_root, interval = c(0,1), mu = mu, rate = rate, volat = volat, lambda = lambda, distr = distr, jump_param)$root
+  stats::uniroot(kjdf_root, interval = c(0.0,1.0), mu = mu, rate = rate, volat = volat, lambda = lambda, distr = distr, jump_param)$root
 }

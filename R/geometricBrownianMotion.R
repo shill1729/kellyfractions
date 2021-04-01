@@ -11,18 +11,21 @@
 #' @export kellyGBM
 kellyGBM <- function(drift, volat, rate = 0, restraint = NULL)
 {
+  f <- 0
   if(is.null(restraint))
   {
     f <- (drift-rate)/(volat^2)
-    return(f)
+
   } else if (abs(drift-rate) <= restraint*volat^2)
   {
     f <- (drift-rate)/(volat^2)
-    return(f)
+
 
   } else{
-    return(restraint)
+    f <- restraint
   }
+  names(f) <- "optimalFraction"
+  return(f)
 
 }
 

@@ -15,13 +15,19 @@ kellyJumpDiffusion(mu, rate, volat, lambda, distr, jump_param)
 
 \item{lambda}{mean rate of jumps}
 
-\item{distr}{distribution of jump sizes}
+\item{distr}{distribution of jump sizes, "norm", "unif", "dkou", etc.}
 
-\item{jump_param}{parameters of distribution}
+\item{jump_param}{parameters of distribution, a named list that must match the names of the distribution}
 }
 \value{
 numeric
 }
 \description{
-log optimal criterion under jump-diffusions
+{The log-optimal allocation under a geometric jump diffusion.
+Does not exist for certain regions of the parameter space.}
+}
+\details{
+{The optimal fraction is the root of an integral equation. It does not exist
+when the classical fraction is bigger than one plus the jump rate multiplied by the
+sum of the MGF of the jump-size distribution evaluated at 1, -1, and subtracting off 2 in this factor.}
 }

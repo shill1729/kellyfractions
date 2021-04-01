@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The package kellyfractions provides functions for computing optimal wagers, bets, allocations, and portfolios under a variety of models of increasing generality. Features also include simulations of each model and the growth-rates obtained from each strategy.
+The package kellyfractions provides functions for computing log-optimal wagers, bets, allocations, and portfolios under a variety of models of increasing generality. Features also include simulations of each model and the growth-rates obtained from each strategy.
 
 ## Installation
 
