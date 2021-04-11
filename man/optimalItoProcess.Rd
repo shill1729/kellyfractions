@@ -4,7 +4,7 @@
 \alias{optimalItoProcess}
 \title{Simulate log-optimal strategy for a given Ito process}
 \usage{
-optimalItoProcess(bankroll, t, spot, rate, dynamics)
+optimalItoProcess(bankroll, t, spot, rate, dynamics, n = 1000)
 }
 \arguments{
 \item{bankroll}{initial bankroll to invest}
@@ -16,6 +16,8 @@ optimalItoProcess(bankroll, t, spot, rate, dynamics)
 \item{rate}{the return of the bond}
 
 \item{dynamics}{list of drift and volatility function of \code{(t, s)}}
+
+\item{n}{number of time-steps to use in sample-path simulation}
 }
 \value{
 data.frame of solution
@@ -24,5 +26,6 @@ data.frame of solution
 {Simulate log-optimal strategy for prices driven by an Ito process}
 }
 \details{
-{...}
+{The argument \code{dynamics} must be a named list of functions \code{drift(t,x)} and
+\code{diffusion(t, x)}.}
 }

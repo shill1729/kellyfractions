@@ -16,9 +16,9 @@ LinkingTo:
     Rcpp
 Imports:
     findistr,
-    fkpde,
     libstableR,
     odeSolveR,
+    pdes,
     quadprog,
     Rcpp,
     sdes

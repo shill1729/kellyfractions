@@ -4,7 +4,7 @@
 \alias{entropyItoProcess}
 \title{Log-growth rate under optimal fraction invested in Ito process}
 \usage{
-entropyItoProcess(t, s, dynamics, rate = 0)
+entropyItoProcess(t, s, dynamics, rate = 0, resolution = c(200, 200))
 }
 \arguments{
 \item{t}{length of time}
@@ -14,6 +14,8 @@ entropyItoProcess(t, s, dynamics, rate = 0)
 \item{dynamics}{list of drift and volatility function}
 
 \item{rate}{risk-free rate}
+
+\item{resolution}{the time and space resolution for the PDE solver}
 }
 \value{
 numeric

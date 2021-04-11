@@ -69,8 +69,8 @@ optimalGBM <- function(bankroll, t, spot, rate, parameters)
   {
     stop("volatility must be positive")
   }
-  dynamics <- list(function(t, s) mu,
-                   function(t, s) volat
+  dynamics <- list(drift = function(t, s) mu,
+                   diffusion = function(t, s) volat
   )
   z <- optimalItoProcess(bankroll, t, spot, rate, dynamics)
   return(z)
