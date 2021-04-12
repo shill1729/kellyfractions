@@ -4,10 +4,10 @@
 \alias{mixtureParameterCheck}
 \title{Input error handling for mixture model}
 \usage{
-mixtureParameterCheck(parameters)
+mixtureParameterCheck(param)
 }
 \arguments{
-\item{parameters}{three rows containing probabilities, drifts, volatilities}
+\item{param}{three rows containing probabilities, drifts, volatilities}
 }
 \value{
 error or null

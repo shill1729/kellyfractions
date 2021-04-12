@@ -4,7 +4,7 @@
 \alias{optimalMixtureDiffusion}
 \title{Simulate log-optimal strategy on mixture diffusions}
 \usage{
-optimalMixtureDiffusion(bankroll, t, spot, rate, parameters)
+optimalMixtureDiffusion(bankroll, t, spot, rate, param)
 }
 \arguments{
 \item{bankroll}{initial bankroll to invest}
@@ -15,7 +15,7 @@ optimalMixtureDiffusion(bankroll, t, spot, rate, parameters)
 
 \item{rate}{the return of the bond}
 
-\item{parameters}{matrix of parameters of mixture, see details}
+\item{param}{matrix of parameters of mixture, see details}
 }
 \value{
 data.frame of solution

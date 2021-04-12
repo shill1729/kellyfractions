@@ -4,7 +4,7 @@
 \alias{entropyMixtureDiffusion}
 \title{Compute the log-growth rate under optimally controlled mixture diffusions}
 \usage{
-entropyMixtureDiffusion(t, s, spot, rate, parameters)
+entropyMixtureDiffusion(t, s, spot, rate, param, resolution = c(200, 200))
 }
 \arguments{
 \item{t}{time horizon}
@@ -15,7 +15,9 @@ entropyMixtureDiffusion(t, s, spot, rate, parameters)
 
 \item{rate}{risk-free rate}
 
-\item{parameters}{parameters of mixture}
+\item{param}{parameters of mixture}
+
+\item{resolution}{time and space resolution for the PDE solver}
 }
 \value{
 numeric

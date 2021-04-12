@@ -213,7 +213,7 @@ optimalDTFM <- function(n, spot, bankroll, distr, param, rate = 0, plotG = TRUE)
   {
     plot(px, ylim = bounds, col = "red", type = "l", ylab = c("Total-log return"), xlab = "Day")
     graphics::lines(sx, col = "black")
-    legend(x = "topleft", legend = c("Portfolio", "Stock"), col = c("red", "black"), lty = 1, cex = 0.4)
+    graphics::legend(x = "topleft", legend = c("Portfolio", "Stock"), col = c("red", "black"), lty = 1, cex = 0.4)
   }
   result <- list(total_growth = px[n+1], profit = p[n+1]-p[1])
 

@@ -63,7 +63,7 @@ entropyItoProcess <- function(t, s, dynamics, rate = 0, resolution = c(200, 200)
                   terminal_cost = function(x) 0
   )
   region <- c(0, 2*s)
-  v <- pdes::feynman_kac(region, t, priceDynamics, problem, TRUE, resolution)
+  v <- pdes::feynman_kac(region, t, priceDynamics, problem, FALSE, resolution)
   return(v$u[resolution[1]+1, resolution[2]/2+1])
 
 }

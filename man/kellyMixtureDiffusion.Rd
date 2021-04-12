@@ -4,18 +4,18 @@
 \alias{kellyMixtureDiffusion}
 \title{Kelly-criterion for mixture diffusions}
 \usage{
-kellyMixtureDiffusion(t, s, rate, parameters, spot, FUN = FALSE)
+kellyMixtureDiffusion(t, s, spot, rate, param, FUN = FALSE)
 }
 \arguments{
 \item{t}{current time}
 
 \item{s}{current price}
 
+\item{spot}{initial price}
+
 \item{rate}{the discounting rate/money-market account return}
 
-\item{parameters}{matrix with rows probs, mus, sigmas for the components}
-
-\item{spot}{initial price}
+\item{param}{matrix with rows probs, mus, sigmas for the components}
 
 \item{FUN}{boolean whether to return numeric or function}
 }
