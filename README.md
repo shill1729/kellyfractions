@@ -50,7 +50,7 @@ gcev <- entropyCEV(t = 1, spot = 100, rate = rate, parameters = c(mu, volat, cev
 # These should be approximately equal
 output <- rbind(c(kgbm, kito, kcev),
                 c(ggbm, gito, gcev)
-                )
+)
 colnames(output) <- c("gbm", "ito", "cev")
 rownames(output) <- c("fraction", "growth")
 print(output)
