@@ -33,8 +33,8 @@ entropyCEV <- function(t, spot, rate, parameters)
   mu <- parameters[1]
   volat <- parameters[2]
   cev <- parameters[3]
-  dynamics <- list(function(t, s) mu,
-                   function(t, s) volat*s^(cev-1))
+  dynamics <- list(drift = function(t, s) mu,
+                   diffusion = function(t, s) volat*s^(cev-1))
   z <- entropyItoProcess(t, spot, dynamics, rate)
   return(z)
 }

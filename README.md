@@ -34,8 +34,8 @@ mu <- 0.10
 volat <- 0.25
 rate <- 0
 cev <- 1
-dynamics <- list(function(t, s) mu,
-                 function(t, s) volat*s^(cev-1)
+dynamics <- list(drift = function(t, s) mu,
+                 diffusion = function(t, s) volat*s^(cev-1)
 )
 # Optimal allocations
 kito <- kellyItoProcess(0, s = 100, dynamics, rate)
