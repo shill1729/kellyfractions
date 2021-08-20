@@ -19,6 +19,7 @@ Imports:
     libstableR,
     odeSolveR,
     pdes,
+    pricing,
     quadprog,
     Rcpp,
     sdes
