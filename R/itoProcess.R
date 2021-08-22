@@ -96,7 +96,7 @@ optimalItoProcess <- function(bankroll, t, spot, rate, dynamics, n = 1000)
   g <- list(function(t, s, x) volat(t, s)*s,
             function(t, s, x) control(t, s)*volat(t, s)*x
   )
-  z <- sdes::samplePathSystem(f, g, IC, t0 = 0, tn = t, n = n)
+  z <- sdes::sde_system(IC, t0 = 0, tn = t, f, g, n = n)
   sol <- z
   sol$s <- log(sol$s)-log(IC$s)
   sol$x <- log(sol$x)-log(IC$x)
