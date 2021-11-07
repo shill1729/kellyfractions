@@ -98,23 +98,22 @@ kellyPortfolioGBM <- function(drift, Sigma, rate = 0, restraint = 1, direction =
 
   # TODO: Add a semi-positive definitive check here!...
   # Constraint vector and matrix, want <= 1 for budget constraint, and >= 0 for no-short selling
+  direction_factor <- 1
   if(direction == "long")
   {
-    # -restraint for budget constraint (to get u 1^T <= restraint), >0, -u>-1 for 0<u<1
-    bvec <- c(-restraint, rep(0, N), rep(-1, N))
-    # for row is 1s for budget equality constraint, then diag matrices
-    Amat <- cbind(matrix(rep(-1, N), nrow = N), diag(x = 1, N, N), diag(x = -1, N, N))
-  } else if(direction == "short")
-  {
-    bvec <- c(-restraint, rep(0, N), rep(-1, N))
-    Amat <- cbind(matrix(rep(1, N), nrow = N), diag(x = -1, N, N), diag(x = 1, N, N))
+    direction_factor <- 1
+  } else{
+    direction_factor <- -1
   }
+  # -restraint for budget constraint (to get u 1^T <= restraint), >0, -u>-1 for 0<u<1
+  bvec <- c(-restraint, rep(0, N), rep(-1, N))
+  # for row is 1s for budget equality constraint, then diag matrices
+  Amat <- cbind(matrix(rep(-direction_factor, N), nrow = N), diag(x = direction_factor, N, N), diag(x = -direction_factor, N, N))
 
   # Quadratic programming routine
-  qp <- quadprog::solve.QP(Dmat = Sigma, dvec = drift-rate, Amat = Amat, bvec)
+  qp <- quadprog::solve.QP(Dmat = Sigma, dvec = drift-rate, Amat = Amat, bvec, meq = 1)
   optimalWeight <- as.matrix(round(qp$solution, 8))
 
-  growth <- rate+t(drift-rate)%*%(optimalWeight)-0.5*t(optimalWeight)%*%Sigma%*%optimalWeight
   # Append cash weight
   bet <- as.matrix(c(optimalWeight, 1-sum(optimalWeight)))
   rownames(bet) <- c(colnames(Sigma), "cash")
