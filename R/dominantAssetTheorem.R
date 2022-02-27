@@ -40,7 +40,10 @@ dat_strategy <- function(r)
   dom_index <- which(apply(M<=1, 1, all))
   if(length(dom_index) == 0)
   {
-    stop("No dominant asset")
+    warning("No single dominant asset")
+    approxDom <- M-1
+    approxDom <- which.min(apply(approxDom, 1, sum))
+    return(approxDom)
   }
   return(dom_index)
 }
