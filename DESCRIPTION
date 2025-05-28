@@ -11,12 +11,12 @@ Description: Optimal bets via maximizing log return for binary wagers,
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.2
 LinkingTo: 
     Rcpp
 Imports:
     findistr,
-    libstableR,
+    libstable4u,
     odeSolveR,
     pdes,
     pricing,

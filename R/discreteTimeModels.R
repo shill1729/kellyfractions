@@ -58,7 +58,7 @@ kellyDTFM <- function(distr, param, rate = 0, h = 10^-4)
   }
   if(distr == "stable")
   {
-    UB <- stats::uniroot(function(x) libstableR::stable_cdf(x, param)-libstableR::stable_cdf(-x, param)-0.99, interval = c(-1+h, 1))
+    UB <- stats::uniroot(function(x) libstable4u::stable_cdf(x, param)-libstable4u::stable_cdf(-x, param)-0.99, interval = c(-1+h, 1))
     UB <- UB$root
     LB <- -UB
     region <- c(LB, UB)
@@ -147,7 +147,7 @@ entropyDTFM <- function(distr, param, rate = 0, h = 10^-4)
   }
   if(distr == "stable")
   {
-    BD <- libstableR::stable_q(0.99, param)
+    BD <- libstable4u::stable_q(0.99, param)
     LB <- -BD
     region <- c(-BD, BD)
   }
